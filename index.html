@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập Sinh Học 10 - Chu kì tế bào & Nguyên phân</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #2c3e50; padding: 20px; line-height: 1.5; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: #1a73e8; font-size: 24px; text-transform: uppercase; border-bottom: 2px solid #e8f0fe; padding-bottom: 20px; }
+        .question-block { margin-bottom: 30px; padding: 20px; border: 1px solid #eff2f7; border-radius: 12px; transition: 0.3s; }
+        .q-text { font-weight: 600; display: block; margin-bottom: 15px; font-size: 17px; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        label { padding: 12px 15px; border: 1px solid #dee2e6; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: 0.2s; }
+        label:hover { background-color: #f8f9fa; }
+        input[type="radio"] { margin-right: 12px; transform: scale(1.2); }
+        
+        /* Trạng thái đáp án */
+        .correct-ans { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
+        .wrong-ans { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+        .msg { margin-top: 10px; font-weight: bold; display: none; padding: 5px 10px; border-radius: 5px; }
+
+        #btn-submit { display: block; width: 100%; padding: 20px; background: #1a73e8; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 40px; }
+        #btn-submit:hover { background: #1557b0; }
+        #score-board { margin-top: 30px; padding: 20px; border-radius: 10px; text-align: center; font-size: 20px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ĐỀ CƯƠNG TRẮC NGHIỆM SINH HỌC 10</h1>
+    <p style="text-align: center; color: #7f8c8d;">Nội dung: Chu kì tế bào và Nguyên phân (69 câu)</p>
+    <div id="quiz-content"></div>
+    <button id="btn-submit">NỘP BÀI & KIỂM TRA ĐÁP ÁN</button>
+    <div id="score-board"></div>
+</div>
+
+<script>
+const data = [
+    { q: "Chu kì tế bào được kiểm soát chặt chẽ bởi các điểm kiểm soát là:", a: ["G1, S, M.", "G1, G2, M.", "G1, S, G2.", "S, G2, M."], c: 1 },
+    { q: "Khi tế bào tăng kích thước, nếu nhận được tín hiệu đủ điều kiện nhân đôi DNA tại điểm kiểm soát G1 thì tế bào sẽ chuyển sang:", a: ["pha S.", "pha G2.", "pha M.", "phân chia tế bào chất."], c: 0 },
+    { q: "Vai trò của các điểm kiểm soát trong chu kì tế bào là:", a: ["giúp tăng tốc độ phân chia của tế bào.", "giúp giảm tốc độ phân chia của tế bào.", "giúp đảm bảo sự chính xác của chu kì tế bào.", "giúp đảm bảo sự tiến hóa của tế bào."], c: 2 },
+    { q: "Trong nguyên phân, hai chromatid của nhiễm sắc thể phân li đồng đều thành hai nhiễm sắc thể đơn và di chuyển về hai cực của tế bào xảy ra ở:", a: ["kì đầu.", "kì giữa.", "kì sau.", "kì cuối."], c: 2 },
+    { q: "Tại sao có thể quan sát nhiễm sắc thể rõ nhất tại kì giữa của nguyên phân?", a: ["Vì lúc này nhiễm sắc thể dãn xoắn cực đại.", "Vì lúc này nhiễm sắc thể đóng xoắn cực đại.", "Vì lúc này nhiễm sắc thể đã nhân đôi tạo thành nhiễm sắc thể kép.", "Vì lúc này nhiễm sắc thể đã phân li về hai cực."], c: 1 },
+    { q: "Chu kì tế bào là:", a: ["một vòng tuần hoàn các hoạt động sống xảy ra trong một tế bào từ khi tế bào được hình thành đến khi tế bào phân chia thành tế bào mới.", "một vòng tuần hoàn các hoạt động sống xảy ra trong một tế bào từ khi tế bào được hình thành đến khi tế bào đạt kích thước tối đa.", "một vòng tuần hoàn các hoạt động sống xảy ra trong một tế bào từ khi tế bào được hình thành đến khi tế bào già và chết đi.", "một vòng tuần hoàn các hoạt động sống xảy ra từ khi tế bào được hình thành đến khi tế bào mới lại phân chia."], c: 0 },
+    { q: "Phát biểu nào sau đây là đúng khi nói về thời gian chu kì tế bào?", a: ["Thời gian chu kì tế bào là giống nhau ở các loại tế bào khác nhau của cùng một cơ thể sinh vật.", "Thời gian chu kì tế bào là khác nhau ở các loại tế bào khác nhau của cùng một cơ thể sinh vật.", "Thời gian chu kì tế bào là khác nhau ở các tế bào cùng loại ở các cơ thể cùng loài.", "Thời gian chu kì tế bào là giống nhau ở các tế bào cùng loại ở các cơ thể khác loài."], c: 1 },
+    { q: "Trình tự các pha trong chu kì tế bào là:", a: ["G1 -> S -> G2 -> M.", "S -> G1 -> G2 -> M.", "G1 -> G2 -> S -> M.", "M -> G1 -> S -> G2."], c: 0 },
+    { q: "Sự kiện nào sau đây diễn ra ở pha S của chu kì tế bào?", a: ["Tế bào ngừng sinh trưởng.", "DNA và nhiễm sắc thể nhân đôi.", "Các nhiễm sắc thể phân li về 2 cực của tế bào.", "Các nhiễm sắc thể xếp thành 1 hàng trên mặt phẳng xích đạo."], c: 1 },
+    { q: "Trong chu kì tế bào, nhiễm sắc thể tồn tại ở trạng thái kép gồm 2 chromatid dính ở tâm động xuất hiện ở:", a: ["pha S, pha G2, pha M (kì đầu, kì giữa).", "pha S, pha G2, pha M (kì giữa, kì sau).", "pha S, pha G2, pha M (kì sau, kì cuối).", "pha S, pha G2, pha M (kì đầu, kì cuối)."], c: 0 },
+    { q: "Hai tế bào mới sinh ra sau nguyên phân có bộ nhiễm sắc thể giống nhau là nhờ:", a: ["sự co xoắn cực đại của nhiễm sắc thể và sự biến mất của nhân con.", "sự dãn xoắn cực đại của nhiễm sắc thể và sự biến mất của màng nhân.", "sự nhân đôi chính xác DNA và sự phân li đồng đều của các nhiễm sắc thể.", "sự nhân đôi chính xác DNA và sự biến mất của màng nhân."], c: 2 },
+    { q: "Tại sao có sự khác nhau trong quá trình phân chia tế bào chất ở tế bào động vật và tế bào thực vật?", a: ["Vì tế bào động vật có lysosome.", "Vì tế bào động vật có trung thể.", "Vì tế bào thực vật có lục lạp.", "Vì tế bào thực vật có thành tế bào."], c: 3 },
+    { q: "Cho các vai trò sau: (1) Tăng số lượng tế bào giúp cơ thể đa bào sinh trưởng; (2) Tái tạo các mô hoặc cơ quan bị tổn thương; (3) Là cơ chế sinh sản của sinh vật đơn bào; (4) Là cơ chế sinh sản của các loài sinh vật sinh sản vô tính. Có bao nhiêu vai trò của nguyên phân?", a: ["1.", "2.", "3.", "4."], c: 3 },
+    { q: "Khối u ác tính là hiện tượng:", a: ["tế bào khối u không lan rộng đến vị trí khác.", "tế bào khối u có khả năng lan sang các mô lân cận và các cơ quan ở xa.", "tế bào khối u không lan rộng nhưng có khả năng xâm lấn sang các mô lân cận.", "tế bào khối u phân chia một cách bình thường."], c: 1 },
+    { q: "Bệnh ung thư xảy ra là do:", a: ["sự tăng cường phân chia mất kiểm soát của một nhóm tế bào trong cơ thể.", "sự giảm tốc độ phân chia bất thường của một nhóm tế bào trong cơ thể.", "mất khả năng phân chia bất thường của một nhóm tế bào trong cơ thể.", "sự tăng số lượng điểm kiểm soát trong chu kì tế bào."], c: 0 },
+    { q: "Biện pháp phòng tránh ung thư bao gồm: (1) Khám sức khỏe định kì; (2) Giữ môi trường sống trong lành; (3) Không sử dụng thuốc lá, rượu bia, chất kích thích; (4) Chế độ ăn uống, dinh dưỡng, tập luyện hợp lý. Có bao nhiêu biện pháp đúng?", a: ["1.", "2.", "3.", "4."], c: 3 },
+    { q: "Nói về sự phân chia tế bào chất, điều nào sau đây không đúng?", a: ["Tế bào động vật phân chia bằng cách thắt màng tế bào ở vị trí xích đạo.", "Tế bào thực vật phân chia bằng cách hình thành vách ngăn ở trung tâm.", "Sự phân chia diễn ra rất nhanh sau khi phân chia nhân hoàn thành.", "Tế bào chất được phân chia đồng đều cho hai tế bào con."], c: 3 },
+    { q: "Trường hợp nào sau đây thuộc phân bào nguyên phân?", a: ["Tế bào có bộ nhiễm sắc thể 3n tạo ra tế bào con có bộ nhiễm sắc thể 3n.", "Tế bào có bộ nhiễm sắc thể 2n tạo ra tế bào con có bộ nhiễm sắc thể n.", "Tế bào có bộ nhiễm sắc thể 4n tạo ra tế bào con có bộ nhiễm sắc thể 2n.", "Tế bào vi khuẩn tạo ra các tế bào vi khuẩn mới."], c: 0 },
+    { q: "Trong nguyên phân, hiện tượng các nhiễm sắc thể kép co xoắn lại có ý nghĩa gì?", a: ["Thuận lợi cho sự phân li của các nhiễm sắc thể.", "Thuận lợi cho sự nhân đôi của các nhiễm sắc thể.", "Thuận lợi cho sự tiếp hợp của các nhiễm sắc thể.", "Trao đổi chéo diễn ra dễ hơn."], c: 0 },
+    { q: "Trong nguyên phân, hiện tượng các nhiễm sắc thể kép dãn xoắn lại có ý nghĩa gì?", a: ["Thuận lợi cho sự phân li của các nhiễm sắc thể.", "Thuận lợi cho sự nhân đôi và phiên mã của các nhiễm sắc thể.", "Thuận lợi cho sự tiếp hợp của các nhiễm sắc thể.", "Trao đổi chéo diễn ra dễ hơn."], c: 1 },
+    { q: "Nguyên nhân chủ yếu làm cho các tế bào con luôn có bộ nhiễm sắc thể giống hệt tế bào mẹ là:", a: ["Các kì của quá trình phân bào diễn ra một cách tuần tự và liên tiếp.", "Nhiễm sắc thể nhân đôi thành nhiễm sắc thể kép, sau đó chia cho hai tế bào con.", "Nhiễm sắc thể nhân đôi thành nhiễm sắc thể kép, sau đó phân chia đồng đều cho hai tế bào con.", "Ở kì sau, các nhiễm sắc thể tách nhau và trượt về hai cực của tế bào."], c: 2 },
+    { q: "Kì trung gian được gọi là thời kì sinh trưởng của tế bào vì:", a: ["Kì này nằm trung gian giữa hai lần phân bào.", "Nó diễn ra sự nhân đôi của nhiễm sắc thể và trung thể.", "Nó diễn ra quá trình tổng hợp các chất, các bào quan cho tế bào.", "Nó là giai đoạn chuẩn bị cho quá trình phân chia."], c: 2 },
+    { q: "Phát biểu nào sau đây không đúng về chu kì tế bào?", a: ["Chu kì tế bào là khoảng thời gian giữa hai lần phân bào.", "Chu kì tế bào gồm kì trung gian và quá trình nguyên phân.", "Kì trung gian chiếm phần lớn thời gian của chu kì tế bào.", "Chu kì tế bào của mọi tế bào trong một cơ thể đều bằng nhau."], c: 3 },
+    { q: "Ở cơ thể người, phân bào nguyên phân có ý nghĩa như thế nào?", a: ["Thay thế các tế bào đã chết và làm cho cơ thể lớn lên.", "Giúp cơ thể tạo ra các giao tử để duy trì nòi giống.", "Giúp cơ thể thực hiện các hoạt động tư duy và vận động.", "Giúp cơ thể lớn lên và tạo giao tử để thực hiện sinh sản."], c: 0 },
+    { q: "Hoạt động chỉ xảy ra ở tế bào thực vật mà không có ở tế bào động vật trong quá trình phân chia tế bào chất là:", a: ["Hình thành vách ngăn ở giữa tế bào.", "Màng nhân xuất hiện bao lấy các nhiễm sắc thể.", "Hình thành eo thắt phân chia tế bào chất.", "Thoi vô sắc biến mất, nhiễm sắc thể dãn xoắn."], c: 0 },
+    { q: "Trật tự hai giai đoạn chính của nguyên phân là:", a: ["Tế bào chất phân chia trước rồi đến nhân phân chia.", "Nhân phân chia trước rồi đến tế bào chất phân chia.", "Nhân và tế bào chất phân chia cùng một lúc.", "Chỉ có nhân phân chia, còn tế bào chất thì không."], c: 1 },
+    { q: "Thoi phân bào có chức năng nào sau đây?", a: ["Là nơi xảy ra quá trình tự nhân đôi của DNA.", "Giúp các nhiễm sắc thể phân li về các cực của tế bào.", "Là nơi các nhiễm sắc thể xếp thành hàng ngang.", "Là nơi các nhiễm sắc thể bám vào để nhân đôi thành nhiễm sắc thể kép."], c: 1 },
+    { q: "Bệnh ung thư là một ví dụ về:", a: ["Sự điều khiển chặt chẽ chu kì tế bào của cơ thể.", "Hiện tượng tế bào thoát khỏi cơ chế điều hòa phân bào của cơ thể.", "Chu kì tế bào diễn ra ổn định.", "Sự phân chia tế bào được điều khiển bằng một hệ thống rất tinh vi."], c: 1 },
+    { q: "Trong kì trung gian: (1) Có 3 pha là G1, S, G2; (2) Ở pha G1 tế bào tổng hợp các chất cần thiết cho sự sinh trưởng; (3) Ở pha G2 DNA nhân đôi; (4) Ở pha S tế bào tổng hợp các chất còn lại cho tế bào. Những phát biểu đúng trong các phát biểu trên là:", a: ["(1), (2)", "(3), (4)", "(1), (2), (3)", "(1), (2), (3), (4)"], c: 1 },
+    { q: "Thời gian của một chu kì tế bào được xác định bằng:", a: ["Thời gian sống và phát triển của tế bào.", "Thời gian giữa hai lần nguyên phân liên tiếp.", "Thời gian của quá trình nguyên phân.", "Thời gian phân chia tế bào chất."], c: 1 },
+    { q: "Giai đoạn mà nhiễm sắc thể tồn tại ở trạng thái đơn là:", a: ["Kì đầu của nguyên phân.", "Kì sau của nguyên phân.", "Kì trung gian của chu kì tế bào.", "Kì giữa của nguyên phân."], c: 1 },
+    { q: "Trình tự các giai đoạn tế bào trải qua giữa hai lần nguyên phân liên tiếp được gọi là:", a: ["Quá trình phân bào.", "Chu kì tế bào.", "Sự phát triển của tế bào.", "Sự phân chia tế bào."], c: 1 },
+    { q: "Sự sinh trưởng ở các mô, cơ quan là nhờ quá trình:", a: ["Nguyên phân.", "Giảm phân.", "Thụ tinh.", "Phát sinh giao tử."], c: 0 },
+    { q: "Phát biểu nào sau đây không đúng về chu kì tế bào?", a: ["Chu kì tế bào là khoảng thời gian giữa hai lần phân bào.", "Chu kì tế bào gồm kì trung gian và quá trình nguyên phân.", "Trong chu kì tế bào có sự biến đổi hình thái và số lượng nhiễm sắc thể.", "Chu kì tế bào của mọi loại tế bào trong một cơ thể đều giống nhau."], c: 3 },
+    { q: "Tế bào nào ở người có chu kì tế bào ngắn nhất?", a: ["Tế bào biểu mô ruột.", "Tế bào gan.", "Tế bào biểu bì da.", "Tế bào hồng cầu."], c: 0 },
+    { q: "Tế bào nào ở người có chu kì tế bào dài nhất?", a: ["Tế bào biểu mô ruột.", "Tế bào gan.", "Tế bào thần kinh.", "Tế bào hồng cầu."], c: 2 },
+    { q: "Trong một chu kì tế bào, kì trung gian được chia làm:", a: ["1 pha.", "3 pha.", "2 pha.", "4 pha."], c: 1 },
+    { q: "Hoạt động xảy ra trong pha G1 là:", a: ["Tổng hợp các chất, các bào quan, chuẩn bị nguyên liệu nhân đôi DNA.", "Trung thể nhân đôi.", "DNA tự nhân đôi.", "Nhiễm sắc thể tự nhân đôi."], c: 0 },
+    { q: "Nguyên phân là hình thức phân chia tế bào không xảy ra ở loại tế bào nào?", a: ["Tế bào vi khuẩn.", "Tế bào thực vật.", "Tế bào động vật.", "Tế bào nấm."], c: 0 },
+    { q: "Hoạt động của nhiễm sắc thể xảy ra ở kì sau của nguyên phân là:", a: ["Các nhiễm sắc thể tách nhau ở tâm động và phân li về 2 cực của tế bào.", "Phân li về 2 cực ở trạng thái kép.", "Không tách tâm động và dãn xoắn.", "Tiếp tục xếp hàng trên mặt phẳng xích đạo."], c: 0 },
+    { q: "Diễn biến nào sau đây đúng trong nguyên phân?", a: ["Tế bào phân chia trước rồi đến nhân.", "Nhân phân chia trước rồi đến tế bào chất.", "Nhân và tế bào chất phân chia cùng một lúc.", "Chỉ có nhân phân chia, còn tế bào chất thì không."], c: 1 },
+    { q: "Thứ tự nào sau đây đúng với các kì trong nguyên phân?", a: ["Kì đầu, kì sau, kì cuối, kì giữa.", "Kì sau, kì giữa, kì đầu, kì cuối.", "Kì đầu, kì giữa, kì sau, kì cuối.", "Kì giữa, kì sau, kì đầu, kì cuối."], c: 2 },
+    { q: "Chu kì tế bào bao gồm trình tự các pha:", a: ["G1, G2, S, nguyên phân.", "G1, S, G2, nguyên phân.", "S, G1, G2, nguyên phân.", "G2, G1, S, nguyên phân."], c: 1 },
+    { q: "Nguyên phân không xảy ra ở loại tế bào nào?", a: ["Tế bào hợp tử.", "Tế bào sinh dưỡng.", "Tế bào sinh dục sơ khai.", "Tế bào sinh dục chín."], c: 3 },
+    { q: "Trong quá trình nguyên phân nhiễm sắc thể nhân đôi ở:", a: ["Vi khuẩn và virus.", "Tế bào sinh tinh và sinh trứng.", "Giao tử.", "Tế bào sinh dưỡng."], c: 3 },
+    { q: "Các nhiễm sắc thể đính vào thoi phân bào ở vị trí:", a: ["Eo sơ cấp.", "Tâm động.", "Eo thứ cấp.", "Đầu mút nhiễm sắc thể."], c: 1 },
+    { q: "Trong kì đầu của nguyên phân, nhiễm sắc thể có hoạt động nào sau đây?", a: ["Tự nhân đôi tạo nhiễm sắc thể kép.", "Bắt đầu co xoắn lại.", "Co xoắn tối đa.", "Bắt đầu dãn xoắn."], c: 1 },
+    { q: "Thoi phân bào bắt đầu được hình thành ở:", a: ["Kì đầu.", "Kì sau.", "Kì giữa.", "Kì cuối."], c: 0 },
+    { q: "Hiện tượng không xảy ra ở kì cuối của nguyên phân là:", a: ["Màng nhân xuất hiện.", "Các nhiễm sắc thể bắt đầu co xoắn lại.", "Thoi phân bào tiêu biến.", "Nhiễm sắc thể dãn xoắn."], c: 1 },
+    { q: "Trong kì đầu, nhiễm sắc thể có đặc điểm nào sau đây?", a: ["Ở trạng thái đơn, co xoắn.", "Ở trạng thái kép, đang co xoắn.", "Ở trạng thái kép, dãn xoắn.", "Ở trạng thái đơn, dãn xoắn."], c: 1 },
+    { q: "Trong kì giữa, nhiễm sắc thể có đặc điểm nào sau đây?", a: ["Ở trạng thái đơn, co xoắn cực đại.", "Ở trạng thái kép, co xoắn cực đại.", "Ở trạng thái đơn, dãn xoắn.", "Ở trạng thái kép, dãn xoắn."], c: 1 },
+    { q: "Trong kì sau, nhiễm sắc thể có đặc điểm nào sau đây?", a: ["Ở trạng thái đơn, co xoắn.", "Ở trạng thái kép, co xoắn.", "Ở trạng thái kép, dãn xoắn.", "Ở trạng thái đơn, dãn xoắn."], c: 0 },
+    { q: "Trong kì cuối, nhiễm sắc thể có đặc điểm nào sau đây?", a: ["Ở trạng thái đơn, co xoắn.", "Ở trạng thái kép, co xoắn.", "Ở trạng thái kép, dãn xoắn.", "Ở trạng thái đơn, dãn xoắn."], c: 3 },
+    { q: "Trong chu kì nguyên phân, trạng thái đơn của nhiễm sắc thể tồn tại ở:", a: ["Kì đầu và kì giữa.", "Kì sau và kì cuối.", "Kì giữa và kì sau.", "Kì cuối và kì đầu."], c: 1 },
+    { q: "Thoi phân bào được hình thành theo nguyên tắc:", a: ["Từ giữa tế bào lan dần ra.", "Từ hai cực của tế bào lan vào giữa.", "Chỉ hình thành ở một cực của tế bào.", "Chỉ xuất hiện ở vùng tâm tế bào."], c: 1 },
+    { q: "Quá trình nguyên phân không bao gồm kì nào sau đây?", a: ["Kì trung gian.", "Kì giữa.", "Kì đầu.", "Kì cuối."], c: 0 },
+    { q: "Hoạt động nào sau đây không xảy ra ở kì trung gian?", a: ["Sinh tổng hợp chất.", "Nhân đôi nhiễm sắc thể.", "Hình thành thoi vô sắc.", "Sinh tổng hợp chất và nhân đôi nhiễm sắc thể."], c: 2 },
+    { q: "Ở kì đầu của nguyên phân không xảy ra sự kiện nào sau đây?", a: ["Màng nhân tiêu biến.", "Nhiễm sắc thể co xoắn.", "Nhiễm sắc thể tách nhau và di chuyển về 2 cực của tế bào.", "Thoi phân bào xuất hiện."], c: 2 },
+    { q: "Trong nguyên phân, khi nằm trên mặt phẳng xích đạo của thoi phân bào, các nhiễm sắc thể xếp thành:", a: ["Một hàng.", "Ba hàng.", "Hai hàng.", "Bốn hàng."], c: 0 },
+    { q: "Nhiễm sắc thể có hình thái đặc trưng và dễ quan sát nhất vào:", a: ["Kì giữa.", "Kì sau.", "Kì cuối.", "Kì đầu."], c: 0 },
+    { q: "Cho các dữ kiện: (1) Nhiễm sắc thể kép co xoắn; (2) Màng nhân và nhân con tiêu biến; (3) Màng nhân và nhân con xuất hiện. Đặc điểm của kì đầu là:", a: ["(1) và (2).", "(2) và (3).", "(1) và (3).", "(1), (2) và (3)."], c: 0 },
+    { q: "Một tế bào sinh dưỡng có bộ nhiễm sắc thể 2n thực hiện nguyên phân liên tiếp 3 đợt, số tế bào con tạo thành là:", a: ["24.", "16.", "8.", "48."], c: 2 },
+    { q: "Số tâm động có trong mỗi tế bào ở kì sau của quá trình nguyên phân ở một loài có bộ nhiễm sắc thể 2n = 8 là:", a: ["8.", "16.", "4.", "32."], c: 1 },
+    { q: "Khi hoàn thành kì sau của quá trình nguyên phân, bộ nhiễm sắc thể có trong tế bào là:", a: ["4n đơn.", "4n kép.", "2n đơn.", "2n kép."], c: 0 },
+    { q: "Số chromatid có trong mỗi tế bào ở kì đầu của quá trình nguyên phân là (với bộ nhiễm sắc thể 2n):", a: ["n.", "4n.", "2n.", "0."], c: 1 },
+    { q: "Số chromatid có trong mỗi tế bào ở kì giữa của quá trình nguyên phân là:", a: ["4n.", "2n.", "n.", "0."], c: 0 },
+    { q: "Số chromatid có trong mỗi tế bào ở kì sau của quá trình nguyên phân là:", a: ["4n.", "2n.", "n.", "0."], c: 3 },
+    { q: "Số chromatid có trong mỗi tế bào ở kì cuối của quá trình nguyên phân là:", a: ["4n.", "2n.", "n.", "0."], c: 3 },
+    { q: "Quá trình nguyên phân từ một hợp tử của ruồi giấm (2n=8) đã tạo ra được 8 tế bào con. Số nhiễm sắc thể có trong các tế bào con ở kì sau của lần nguyên phân cuối cùng là:", a: ["4.", "8.", "64.", "16."], c: 3 }
+];
+
+const container = document.getElementById('quiz-content');
+
+data.forEach((item, index) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question-block';
+    qDiv.innerHTML = `
+        <span class="q-text">Câu ${index + 1}: ${item.q}</span>
+        <div class="options">
+            ${item.a.map((opt, i) => `
+                <label id="label-${index}-${i}">
+                    <input type="radio" name="q${index}" value="${i}">
+                    ${String.fromCharCode(65 + i)}. ${opt}
+                </label>
+            `).join('')}
+        </div>
+        <div class="msg" id="msg-${index}"></div>
+    `;
+    container.appendChild(qDiv);
+});
+
+document.getElementById('btn-submit').onclick = function() {
+    let score = 0;
+    data.forEach((item, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const msg = document.getElementById(`msg-${index}`);
+        const correctIdx = item.c;
+        
+        // Reset
+        for(let i=0; i<4; i++) document.getElementById(`label-${index}-${i}`).className = '';
+        msg.style.display = 'none';
+
+        // Luôn hiện màu xanh cho đáp án đúng
+        document.getElementById(`label-${index}-${correctIdx}`).classList.add('correct-ans');
+
+        if (selected) {
+            const userIdx = parseInt(selected.value);
+            if (userIdx === correctIdx) {
+                score++;
+            } else {
+                document.getElementById(`label-${index}-${userIdx}`).classList.add('wrong-ans');
+                msg.innerHTML = `❌ Sai rồi! Đáp án đúng là ${String.fromCharCode(65 + correctIdx)}`;
+                msg.style.color = '#dc3545';
+                msg.style.display = 'block';
+            }
+        } else {
+            msg.innerHTML = `⚠️ Bạn chưa chọn đáp án. Đáp án đúng là ${String.fromCharCode(65 + correctIdx)}`;
+            msg.style.color = '#f39c12';
+            msg.style.display = 'block';
+        }
+    });
+
+    const board = document.getElementById('score-board');
+    board.style.display = 'block';
+    board.innerHTML = `KẾT QUẢ: ${score}/${data.length} CÂU ĐÚNG (${((score/data.length)*10).toFixed(2)} ĐIỂM)`;
+    board.style.backgroundColor = score > 35 ? '#d4edda' : '#f8d7da';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+</script>
+</body>
+</html>
